@@ -1,28 +1,53 @@
-import Image from "next/image";
+"use client";
+
+import FeaturedBooks from "./components/FeaturedBooks";
+import { useEffect, useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { setBooks, setFilteredList } from "./store/slices/booksSlice";
+import Loading from "./loading";
+import Hero from "./components/Hero";
 
 const Homepage = () => {
+    const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+            const { data } = await getFeaturedBooks();
+            setLoading(false);
+            dispatch(setBooks(data));
+            dispatch(setFilteredList(data));
+        };
+        fetchBooks();
+    }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
+
     return (
         <div>
-            {/* Hero Section */}
-            <div className="grid grid-cols-[50%_50%]">
-                <div className="bg-[#004D6D] text-white px-40 py-20 flex flex-col gap-8">
-                    <p className="font-medium text-3xl capitalize">
-                        Lorem ipsum dolor sit amet consectetur.
-                    </p>
-                    <p className="text-2xl capitalize">
-                        Lorem ipsum dolor sit amet consectetur. Viverr
-                        scelerisqu.
-                    </p>
-                </div>
-                <div className="w-full h-full relative">
-                    <Image src="/hero.png" alt="Hero Image" layout="fill" />
-                </div>
-            </div>
-
             {/* Featured Books */}
-            <div></div>
+            <div>
+                <FeaturedBooks />
+            </div>
         </div>
     );
 };
+
+async function getFeaturedBooks() {
+    const res = await fetch(`https://books-list-api.vercel.app/books`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "x-api-key": "#b0@6hX8YasCq6^unOaPw1tqR",
+        },
+    });
+    const data = await res.json();
+    return data;
+}
 
 export default Homepage;
