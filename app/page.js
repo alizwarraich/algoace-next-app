@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setBooks, setFilteredList } from "./store/slices/booksSlice";
 import Loading from "./loading";
-import Hero from "./components/Hero";
 
 const Homepage = () => {
     const dispatch = useDispatch();
